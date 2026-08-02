@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Properties | Harbour & Co</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black:#0A0A0A; --dark:#111111; --dark-mid:#1A1A1A;
+    --gold:#C9A84C; --gold-light:#E2C47A; --gold-dim:rgba(201,168,76,0.15);
+    --white:#FFFFFF; --off-white:#F8F6F2; --grey:#888888;
+    --light-grey:#E8E4DF; --border:rgba(201,168,76,0.2);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Inter',sans-serif;background:var(--black);color:var(--white);overflow-x:hidden;}
+  h1,h2,h3,h4{font-family:'Cormorant Garamond',serif;}
+
+  /* DEMO BANNER */
+  .demo-banner{
+    background:var(--gold);color:var(--black);
+    text-align:center;padding:10px 20px;
+    font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+    position:sticky;top:0;z-index:200;
+  }
+
+  /* NAV */
+  nav{
+    position:sticky;top:36px;left:0;right:0;z-index:100;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:0 6%;height:72px;
+    background:rgba(10,10,10,0.97);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border);
+  }
+  .logo{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:500;color:var(--white);letter-spacing:3px;text-transform:uppercase;text-decoration:none;}
+  .logo span{color:var(--gold);}
+  .nav-links{display:flex;gap:32px;list-style:none;align-items:center;}
+  .nav-links a{font-size:.72rem;font-weight:500;color:rgba(255,255,255,0.65);text-decoration:none;letter-spacing:2px;text-transform:uppercase;transition:color .2s;}
+  .nav-links a:hover,.nav-links a.active{color:var(--gold);}
+  .nav-cta{background:var(--gold)!important;color:var(--black)!important;padding:10px 24px;font-size:.7rem!important;letter-spacing:2px!important;font-weight:600!important;}
+  .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px;}
+  .hamburger span{display:block;width:24px;height:1.5px;background:#fff;}
+  .mobile-menu{display:none;position:fixed;top:108px;left:0;right:0;background:rgba(10,10,10,0.98);backdrop-filter:blur(12px);padding:24px 6%;flex-direction:column;gap:0;border-bottom:1px solid var(--border);z-index:99;}
+  .mobile-menu.open{display:flex;}
+  .mobile-menu a{color:rgba(255,255,255,0.7);text-decoration:none;font-size:.78rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.06);transition:color .2s;}
+  .mobile-menu a:hover{color:var(--gold);}
+
+  /* PAGE HEADER */
+  .page-header{
+    padding:80px 6% 60px;
+    border-bottom:1px solid var(--border);
+    background:var(--dark);
+  }
+  .page-header .eyebrow{font-size:.65rem;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;display:block;}
+  .page-header h1{font-size:clamp(2.5rem,5vw,4rem);font-weight:300;letter-spacing:-1px;}
+  .page-header h1 em{color:var(--gold);font-style:italic;}
+  .page-header p{color:var(--grey);font-size:.92rem;margin-top:16px;max-width:560px;line-height:1.8;font-weight:300;}
+
+  /* PROPERTY LIST */
+  .properties{padding:60px 6%;max-width:1400px;margin:0 auto;}
+
+  /* PROPERTY CARD — full detail */
+  .property{
+    border:1px solid var(--border);
+    margin-bottom:4px;
+    overflow:hidden;
+    background:var(--dark);
+    transition:border-color .3s;
+  }
+  .property:hover{border-color:rgba(201,168,76,0.5);}
+
+  .property-hero{
+    position:relative;height:520px;overflow:hidden;cursor:pointer;
+  }
+  .property-hero img{
+    width:100%;height:100%;object-fit:cover;
+    filter:brightness(0.8);
+    transition:transform .8s ease,filter .8s ease;
+  }
+  .property:hover .property-hero img{transform:scale(1.03);filter:brightness(0.7);}
+  .property-hero-overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg,transparent 40%,rgba(10,10,10,0.85) 100%);
+  }
+  .property-hero-badge{
+    position:absolute;top:24px;left:24px;
+    background:var(--gold);color:var(--black);
+    font-size:.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+    padding:6px 16px;
+  }
+  .property-hero-price{
+    position:absolute;bottom:24px;left:24px;right:24px;
+    display:flex;justify-content:space-between;align-items:flex-end;
+  }
+  .property-hero-price h2{
+    font-size:clamp(1.8rem,4vw,2.8rem);font-weight:300;color:var(--white);
+    letter-spacing:-1px;line-height:1;
+  }
+  .price-tag{
+    font-family:'Cormorant Garamond',serif;
+    font-size:clamp(1.8rem,3vw,2.5rem);font-weight:500;color:var(--gold);
+    line-height:1;
+  }
+
+  /* Photo strip */
+  .photo-strip{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:4px;
+    height:200px;background:var(--black);
+  }
+  .photo-strip-item{overflow:hidden;cursor:pointer;}
+  .photo-strip-item img{
+    width:100%;height:100%;object-fit:cover;
+    filter:brightness(0.75);
+    transition:filter .3s,transform .3s;
+  }
+  .photo-strip-item:hover img{filter:brightness(1);transform:scale(1.04);}
+  .photo-strip-item.more{
+    position:relative;
+  }
+  .photo-strip-item.more::after{
+    content:attr(data-count);
+    position:absolute;inset:0;
+    background:rgba(10,10,10,0.65);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Cormorant Garamond',serif;
+    font-size:1.8rem;font-weight:300;color:var(--white);
+  }
+
+  /* Property body */
+  .property-body{
+    display:grid;grid-template-columns:1fr 380px;
+    gap:0;
+  }
+  .property-main{padding:48px 48px 48px 48px;border-right:1px solid var(--border);}
+  .property-sidebar{padding:48px 36px;}
+
+  .property-address{
+    font-size:.7rem;font-weight:600;letter-spacing:2.5px;
+    text-transform:uppercase;color:var(--gold);
+    margin-bottom:10px;display:block;
+  }
+  .property-title{
+    font-size:clamp(1.6rem,3vw,2.4rem);font-weight:300;
+    color:var(--white);margin-bottom:6px;letter-spacing:-.5px;
+  }
+  .property-type{font-size:.78rem;color:var(--grey);margin-bottom:28px;}
+
+  /* Quick stats */
+  .property-stats{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:1px;background:var(--border);
+    margin-bottom:36px;
+  }
+  .property-stat{
+    background:var(--dark-mid);padding:18px 16px;text-align:center;
+  }
+  .property-stat-icon{font-size:1.2rem;margin-bottom:6px;display:block;}
+  .property-stat-val{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:500;color:var(--white);display:block;line-height:1;}
+  .property-stat-label{font-size:.6rem;color:var(--grey);letter-spacing:1.5px;text-transform:uppercase;margin-top:3px;display:block;}
+
+  /* Description */
+  .prop-section-title{
+    font-size:.65rem;font-weight:700;letter-spacing:3px;
+    text-transform:uppercase;color:var(--gold);
+    margin-bottom:16px;display:block;
+    padding-bottom:8px;border-bottom:1px solid var(--border);
+  }
+  .prop-desc{color:rgba(255,255,255,0.7);font-size:.9rem;line-height:1.9;font-weight:300;margin-bottom:32px;}
+  .prop-desc p{margin-bottom:14px;}
+
+  /* Features list */
+  .features-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:0;
+    background:var(--border);margin-bottom:32px;
+  }
+  .feature-item{
+    background:var(--dark-mid);padding:12px 16px;
+    font-size:.82rem;color:rgba(255,255,255,0.7);
+    display:flex;align-items:center;gap:10px;font-weight:300;
+  }
+  .feature-item::before{content:'✓';color:var(--gold);font-weight:700;font-size:.75rem;}
+
+  /* Sidebar */
+  .sidebar-price{
+    font-family:'Cormorant Garamond',serif;
+    font-size:2.2rem;font-weight:500;color:var(--gold);
+    margin-bottom:4px;display:block;
+  }
+  .sidebar-price-label{font-size:.65rem;color:var(--grey);letter-spacing:2px;text-transform:uppercase;margin-bottom:28px;display:block;}
+  .sidebar-divider{width:100%;height:1px;background:var(--border);margin:24px 0;}
+
+  .agent-card{display:flex;gap:16px;align-items:center;margin-bottom:28px;}
+  .agent-avatar{
+    width:56px;height:56px;border-radius:50%;
+    background:var(--dark-mid);border:2px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--gold);flex-shrink:0;
+  }
+  .agent-name{font-weight:600;color:var(--white);font-size:.9rem;}
+  .agent-title{font-size:.72rem;color:var(--grey);margin-top:2px;}
+
+  .enquire-btn{
+    display:block;width:100%;padding:15px;
+    background:var(--gold);color:var(--black);border:none;
+    font-family:'Inter',sans-serif;font-size:.72rem;font-weight:700;
+    letter-spacing:2.5px;text-transform:uppercase;
+    cursor:pointer;transition:background .2s;margin-bottom:10px;
+    text-align:center;text-decoration:none;
+  }
+  .enquire-btn:hover{background:var(--gold-light);}
+  .enquire-btn.outline{
+    background:transparent;color:var(--white);
+    border:1px solid var(--border);
+  }
+  .enquire-btn.outline:hover{border-color:var(--gold);color:var(--gold);}
+
+  .open-home{
+    background:var(--gold-dim);border:1px solid var(--border);
+    padding:16px 20px;margin-top:20px;
+  }
+  .open-home-label{font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:6px;}
+  .open-home-time{font-size:.88rem;color:var(--white);font-weight:500;}
+
+
+  /* LIGHTBOX */
+  .lightbox {
+    display:none; position:fixed; inset:0; z-index:1000;
+    background:rgba(0,0,0,0.95); backdrop-filter:blur(8px);
+    align-items:center; justify-content:center;
+    flex-direction:column;
+  }
+  .lightbox.open { display:flex; }
+  .lightbox-img-wrap {
+    position:relative; max-width:90vw; max-height:80vh;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .lightbox-img {
+    max-width:90vw; max-height:80vh;
+    object-fit:contain; display:block;
+    box-shadow:0 20px 80px rgba(0,0,0,0.8);
+  }
+  .lightbox-close {
+    position:fixed; top:24px; right:32px;
+    font-size:2rem; color:rgba(255,255,255,0.6);
+    cursor:pointer; background:none; border:none;
+    transition:color .2s; line-height:1; z-index:1001;
+    font-family:'Inter',sans-serif; font-weight:300;
+  }
+  .lightbox-close:hover { color:#fff; }
+  .lightbox-prev, .lightbox-next {
+    position:fixed; top:50%; transform:translateY(-50%);
+    background:rgba(201,168,76,0.15); border:1px solid var(--border);
+    color:var(--gold); font-size:1.4rem; cursor:pointer;
+    width:52px; height:52px; display:flex;
+    align-items:center; justify-content:center;
+    transition:all .2s; z-index:1001;
+  }
+  .lightbox-prev { left:20px; }
+  .lightbox-next { right:20px; }
+  .lightbox-prev:hover, .lightbox-next:hover {
+    background:var(--gold); color:var(--black);
+  }
+  .lightbox-caption {
+    margin-top:20px; text-align:center;
+  }
+  .lightbox-caption-title {
+    font-family:'Cormorant Garamond',serif;
+    font-size:1.1rem; color:var(--white); font-weight:300;
+  }
+  .lightbox-counter {
+    font-size:.7rem; color:var(--grey);
+    letter-spacing:2px; text-transform:uppercase;
+    margin-top:6px;
+  }
+  .lightbox-thumbs {
+    display:flex; gap:8px; margin-top:16px;
+    flex-wrap:wrap; justify-content:center;
+    max-width:600px;
+  }
+  .lightbox-thumb {
+    width:60px; height:44px; object-fit:cover;
+    cursor:pointer; opacity:.5; transition:opacity .2s;
+    border:1px solid transparent;
+  }
+  .lightbox-thumb.active, .lightbox-thumb:hover {
+    opacity:1; border-color:var(--gold);
+  }
+
+  /* SCROLL TO TOP / FLOAT */
+  .float-call{position:fixed;bottom:26px;right:26px;z-index:200;width:54px;height:54px;background:var(--gold);color:var(--black);display:flex;align-items:center;justify-content:center;font-size:1.3rem;text-decoration:none;box-shadow:0 6px 24px rgba(201,168,76,0.35);transition:transform .2s;}
+  .float-call:hover{transform:scale(1.08);}
+  .scroll-top{position:fixed;bottom:92px;right:28px;z-index:200;width:42px;height:42px;background:var(--dark);color:var(--gold);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.85rem;text-decoration:none;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;}
+  .scroll-top.visible{opacity:1;pointer-events:all;}
+  .scroll-top:hover{transform:translateY(-3px);}
+
+  /* FOOTER */
+  footer{background:var(--dark);padding:36px 6%;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+  .footer-logo{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:500;color:var(--white);letter-spacing:3px;text-transform:uppercase;}
+  .footer-logo span{color:var(--gold);}
+  footer p{color:rgba(255,255,255,0.2);font-size:.75rem;}
+
+  @media(max-width:1024px){
+    .property-body{grid-template-columns:1fr;}
+    .property-main{border-right:none;border-bottom:1px solid var(--border);}
+    .property-stats{grid-template-columns:repeat(2,1fr);}
+  }
+  @media(max-width:768px){
+    .nav-links{display:none;}
+    .hamburger{display:flex;}
+    .photo-strip{grid-template-columns:1fr 1fr;height:auto;}
+    .photo-strip-item{height:140px;}
+    .features-grid{grid-template-columns:1fr;}
+    footer{flex-direction:column;text-align:center;}
+    .property-hero{height:320px;}
+    .lightbox-img-wrap, .lightbox-img { max-width:94vw; max-height:60vh; }
+    .lightbox-prev, .lightbox-next { width:40px; height:40px; font-size:1.1rem; }
+    .lightbox-prev { left:8px; }
+    .lightbox-next { right:8px; }
+    .lightbox-close { top:14px; right:16px; font-size:1.6rem; }
+    .lightbox-thumbs { max-width:92vw; }
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-banner">⚠️ Demo listings only — properties, prices and addresses are fictional. Not real listings.</div>
+
+<nav>
+  <a href="index.html" class="logo">Harbour <span>&</span> Co</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="listings.html" class="active">Properties</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#contact" class="nav-cta">Enquire</a></li>
+  </ul>
+  <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html" onclick="document.getElementById('mobileMenu').classList.remove('open')">Home</a>
+  <a href="listings.html" onclick="document.getElementById('mobileMenu').classList.remove('open')">Properties</a>
+  <a href="index.html#about" onclick="document.getElementById('mobileMenu').classList.remove('open')">About</a>
+  <a href="index.html#contact" onclick="document.getElementById('mobileMenu').classList.remove('open')">Enquire</a>
+</div>
+
+<div class="page-header">
+  <span class="eyebrow">Featured Properties</span>
+  <h1>Exclusive <em>Listings</em></h1>
+  <p>A curated selection of Nelson's finest properties. Each home has been hand-selected by our team for its quality, location and lifestyle potential.</p>
+</div>
+
+<div class="properties">
+
+  <!-- PROPERTY 2 -->
+  <div class="property" id="prop2">
+    <div class="property-hero" onclick="openLightbox('prop2', 0)" style="cursor:pointer;">
+      <img src="house2.jpg" alt="The Orchards">
+      <div class="property-hero-overlay"></div>
+      <div class="property-hero-badge">For Sale</div>
+      <div style="position:absolute;top:24px;right:24px;background:rgba(0,0,0,0.6);color:#fff;font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:7px 14px;backdrop-filter:blur(4px);cursor:pointer;">📷 View Photos</div>
+      <div class="property-hero-price">
+        <h2>The Orchards</h2>
+        <div class="price-tag">$1,195,000</div>
+      </div>
+    </div>
+    <div class="photo-strip">
+      <div class="photo-strip-item" onclick="openLightbox('prop2', 1)" style="cursor:pointer;"><img src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=600&q=80" alt="Living area"></div>
+      <div class="photo-strip-item" onclick="openLightbox('prop2', 2)" style="cursor:pointer;"><img src="https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=600&q=80" alt="Kitchen"></div>
+      <div class="photo-strip-item" onclick="openLightbox('prop2', 3)" style="cursor:pointer;"><img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=600&q=80" alt="Bedroom"></div>
+      <div class="photo-strip-item more" onclick="openLightbox('prop2', 5)" style="cursor:pointer;" data-count="+5 Photos"><img src="https://images.unsplash.com/photo-1621192756171-ecd54e0a4b39?w=600&q=80" alt="Garden"></div>
+    </div>
+    <div class="property-body">
+      <div class="property-main">
+        <span class="property-address">42 Orchard Road, Atawhai, Nelson</span>
+        <h3 class="property-title">The Orchards</h3>
+        <div class="property-type">Family Residence · Freehold · 810m² Section</div>
+        <div class="property-stats">
+          <div class="property-stat"><span class="property-stat-icon">🛏</span><span class="property-stat-val">4</span><span class="property-stat-label">Bedrooms</span></div>
+          <div class="property-stat"><span class="property-stat-icon">🛁</span><span class="property-stat-val">2</span><span class="property-stat-label">Bathrooms</span></div>
+          <div class="property-stat"><span class="property-stat-icon">🚗</span><span class="property-stat-val">2</span><span class="property-stat-label">Garages</span></div>
+          <div class="property-stat"><span class="property-stat-icon">📐</span><span class="property-stat-val">280m²</span><span class="property-stat-label">Floor Area</span></div>
+        </div>
+
+        <span class="prop-section-title">About This Property</span>
+        <div class="prop-desc">
+          <p>Nestled in one of Atawhai's most sought-after pockets, The Orchards is a beautifully presented family home that strikes the perfect balance between contemporary style and everyday livability. Set on a generous 810m² section with established fruit trees and mature gardens, this is the kind of home families fall in love with and never want to leave.</p>
+          <p>The heart of the home is a spacious open-plan kitchen, dining and living area that opens through large sliding doors to a sunny north-facing deck and the established garden beyond. The kitchen has been recently updated with stone benchtops, quality stainless appliances and ample storage — functional and stylish in equal measure.</p>
+          <p>Four bedrooms are arranged thoughtfully to provide privacy for all members of the family. The master bedroom enjoys its own ensuite and walk-in wardrobe, while the three additional bedrooms are all serviced by a well-appointed main bathroom with both bath and shower. A separate toilet adds further practicality for busy family mornings.</p>
+          <p>The outdoor areas are a genuine highlight. A large north-facing deck flows from the main living space, perfect for entertaining or simply relaxing in the afternoon sun. The established orchard includes apple, pear and plum trees, and the fully fenced rear garden provides a safe and spacious play area for children and pets alike.</p>
+          <p>The double internal-access garage is spacious and includes laundry facilities and additional storage. Located within walking distance of the Atawhai village and with easy access to both Nelson city centre and the Abel Tasman highway, the location is simply outstanding.</p>
+        </div>
+
+        <span class="prop-section-title">Property Features</span>
+        <div class="features-grid">
+          <div class="feature-item">Established fruit orchard</div>
+          <div class="feature-item">North-facing section & deck</div>
+          <div class="feature-item">Recently updated kitchen</div>
+          <div class="feature-item">Stone benchtops throughout</div>
+          <div class="feature-item">Master with ensuite & WIR</div>
+          <div class="feature-item">Double internal-access garage</div>
+          <div class="feature-item">Fully fenced rear garden</div>
+          <div class="feature-item">Heat pump in living area</div>
+          <div class="feature-item">810m² freehold section</div>
+          <div class="feature-item">Walk to Atawhai village</div>
+          <div class="feature-item">New roof 2022</div>
+          <div class="feature-item">Fresh interior repaint 2024</div>
+        </div>
+      </div>
+
+      <div class="property-sidebar">
+        <span class="sidebar-price">$1,195,000</span>
+        <span class="sidebar-price-label">Asking Price · NZD</span>
+        <a href="index.html#contact" class="enquire-btn">Enquire Now</a>
+        <a href="index.html#contact" class="enquire-btn outline">Book a Viewing</a>
+        <div class="open-home">
+          <span class="open-home-label">Open Home</span>
+          <span class="open-home-time">Saturday 10:00am – 10:45am<br>Wednesday 5:00pm – 5:30pm</span>
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="agent-card">
+          <div class="agent-avatar">SC</div>
+          <div>
+            <div class="agent-name">Sarah Chen</div>
+            <div class="agent-title">Senior Agent · Harbour & Co</div>
+          </div>
+        </div>
+        <div style="font-size:.8rem;color:var(--grey);line-height:1.7;font-weight:300;">
+          <div style="margin-bottom:6px;">📞 <a href="tel:0210000002" style="color:var(--grey);text-decoration:none;">021 000 002</a></div>
+          <div>✉️ <a href="mailto:sarah@harbourandco.co.nz" style="color:var(--grey);text-decoration:none;">sarah@harbourandco.co.nz</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROPERTY 3 -->
+  <div class="property" id="prop3">
+    <div class="property-hero" onclick="openLightbox('prop3', 0)" style="cursor:pointer;">
+      <img src="house3.jpg" alt="Bayview Retreat">
+      <div class="property-hero-overlay"></div>
+      <div class="property-hero-badge">For Sale</div>
+      <div style="position:absolute;top:24px;right:24px;background:rgba(0,0,0,0.6);color:#fff;font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:7px 14px;backdrop-filter:blur(4px);cursor:pointer;">📷 View Photos</div>
+      <div class="property-hero-price">
+        <h2>Bayview Retreat</h2>
+        <div class="price-tag">$1,650,000</div>
+      </div>
+    </div>
+    <div class="photo-strip">
+      <div class="photo-strip-item" onclick="openLightbox('prop3', 1)" style="cursor:pointer;"><img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80" alt="Living area"></div>
+      <div class="photo-strip-item" onclick="openLightbox('prop3', 2)" style="cursor:pointer;"><img src="https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?w=600&q=80" alt="Kitchen"></div>
+      <div class="photo-strip-item" onclick="openLightbox('prop3', 4)" style="cursor:pointer;"><img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=80" alt="Bedroom"></div>
+      <div class="photo-strip-item more" onclick="openLightbox('prop3', 5)" style="cursor:pointer;" data-count="+6 Photos"><img src="https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=600&q=80" alt="Outdoor"></div>
+    </div>
+    <div class="property-body">
+      <div class="property-main">
+        <span class="property-address">7 Marine Parade, Tahuna, Nelson</span>
+        <h3 class="property-title">Bayview Retreat</h3>
+        <div class="property-type">Contemporary Residence · Freehold · Steps from the Beach</div>
+        <div class="property-stats">
+          <div class="property-stat"><span class="property-stat-icon">🛏</span><span class="property-stat-val">4</span><span class="property-stat-label">Bedrooms</span></div>
+          <div class="property-stat"><span class="property-stat-icon">🛁</span><span class="property-stat-val">3</span><span class="property-stat-label">Bathrooms</span></div>
+          <div class="property-stat"><span class="property-stat-icon">🚗</span><span class="property-stat-val">2</span><span class="property-stat-label">Garages</span></div>
+          <div class="property-stat"><span class="property-stat-icon">📐</span><span class="property-stat-val">340m²</span><span class="property-stat-label">Floor Area</span></div>
+        </div>
+
+        <span class="prop-section-title">About This Property</span>
+        <div class="prop-desc">
+          <p>Positioned just steps from the golden sands of Tahuna Beach, Bayview Retreat is an exceptional contemporary home that captures the very essence of the Nelson coastal lifestyle. With ocean views from the upper level and a design that maximises indoor-outdoor flow, this is a home built for those who want to live life at its best.</p>
+          <p>Designed by a prominent Nelson architect and completed in 2021, the home makes a bold architectural statement with its clean lines, extensive use of glass and a thoughtfully considered material palette of cedar, concrete and black steel. The result is a home that is both striking from the street and deeply comfortable to live in.</p>
+          <p>The upper level is dedicated to living — a large open-plan kitchen, dining and living space that opens to a wrap-around balcony with views across Tasman Bay. The kitchen is a chef's dream, featuring an island bench, integrated Miele appliances, a butler's pantry and a seamless connection to the outdoor entertaining area.</p>
+          <p>On the lower level, four generous bedrooms each have their own outdoor access to the garden or courtyard. The master suite occupies the entire eastern wing — a hotel-quality retreat with a walk-in wardrobe, ensuite with heated floor, double vanity and a freestanding bath positioned to make the most of the morning light. Two further bathrooms service the remaining bedrooms.</p>
+          <p>Outside, a private heated pool, outdoor shower and landscaped courtyard create a resort-like environment mere steps from one of Nelson's most beloved beaches. A double garage with internal access and additional off-street parking complete this truly exceptional offering.</p>
+        </div>
+
+        <span class="prop-section-title">Property Features</span>
+        <div class="features-grid">
+          <div class="feature-item">Steps to Tahuna Beach</div>
+          <div class="feature-item">Ocean views from upper level</div>
+          <div class="feature-item">Heated swimming pool</div>
+          <div class="feature-item">Architect designed — 2021</div>
+          <div class="feature-item">Miele integrated appliances</div>
+          <div class="feature-item">Butler's pantry</div>
+          <div class="feature-item">Freestanding bath — master ensuite</div>
+          <div class="feature-item">Heated bathroom floors</div>
+          <div class="feature-item">Cedar, concrete & steel exterior</div>
+          <div class="feature-item">Wrap-around upper balcony</div>
+          <div class="feature-item">Double garage + off-street parking</div>
+          <div class="feature-item">Private landscaped courtyard</div>
+        </div>
+      </div>
+
+      <div class="property-sidebar">
+        <span class="sidebar-price">$1,650,000</span>
+        <span class="sidebar-price-label">Asking Price · NZD</span>
+        <a href="index.html#contact" class="enquire-btn">Enquire Now</a>
+        <a href="index.html#contact" class="enquire-btn outline">Book a Viewing</a>
+        <div class="open-home">
+          <span class="open-home-label">Open Home</span>
+          <span class="open-home-time">Saturday 1:00pm – 1:45pm<br>Sunday 10:00am – 10:45am</span>
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="agent-card">
+          <div class="agent-avatar">MT</div>
+          <div>
+            <div class="agent-name">Mark Tūhoe</div>
+            <div class="agent-title">Senior Agent · Harbour & Co</div>
+          </div>
+        </div>
+        <div style="font-size:.8rem;color:var(--grey);line-height:1.7;font-weight:300;">
+          <div style="margin-bottom:6px;">📞 <a href="tel:0210000003" style="color:var(--grey);text-decoration:none;">021 000 003</a></div>
+          <div>✉️ <a href="mailto:mark@harbourandco.co.nz" style="color:var(--grey);text-decoration:none;">mark@harbourandco.co.nz</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROPERTY 4 -->
+  <div class="property" id="prop4">
+    <div class="property-hero" onclick="openLightbox('prop4', 0)" style="cursor:pointer;">
+      <img src="house4.jpg" alt="Central Penthouse">
+      <div class="property-hero-overlay"></div>
+      <div class="property-hero-badge">For Sale</div>
+      <div style="position:absolute;top:24px;right:24px;background:rgba(0,0,0,0.6);color:#fff;font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:7px 14px;backdrop-filter:blur(4px);cursor:pointer;">📷 View Photos</div>
+      <div class="property-hero-price">
+        <h2>Central Penthouse</h2>
+        <div class="price-tag">$895,000</div>
+      </div>
+    </div>
+    <div class="photo-strip">
+      <div class="photo-strip-item" onclick="openLightbox('prop4', 1)" style="cursor:pointer;"><img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=600&q=80" alt="Living area"></div>
+      <div class="photo-strip-item" onclick="openLightbox('prop4', 2)" style="cursor:pointer;"><img src="https://images.unsplash.com/photo-1556912167-f556f1f39fdf?w=600&q=80" alt="Kitchen"></div>
+      <div class="photo-strip-item" onclick="openLightbox('prop4', 3)" style="cursor:pointer;"><img src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=600&q=80" alt="Bedroom"></div>
+      <div class="photo-strip-item more" onclick="openLightbox('prop4', 4)" style="cursor:pointer;" data-count="+4 Photos"><img src="https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?w=600&q=80" alt="Rooftop"></div>
+    </div>
+    <div class="property-body">
+      <div class="property-main">
+        <span class="property-address">Level 8, 12 Bridge Street, Nelson CBD</span>
+        <h3 class="property-title">Central Penthouse</h3>
+        <div class="property-type">Penthouse Apartment · Unit Title · City Views</div>
+        <div class="property-stats">
+          <div class="property-stat"><span class="property-stat-icon">🛏</span><span class="property-stat-val">3</span><span class="property-stat-label">Bedrooms</span></div>
+          <div class="property-stat"><span class="property-stat-icon">🛁</span><span class="property-stat-val">2</span><span class="property-stat-label">Bathrooms</span></div>
+          <div class="property-stat"><span class="property-stat-icon">🚗</span><span class="property-stat-val">1</span><span class="property-stat-label">Car Park</span></div>
+          <div class="property-stat"><span class="property-stat-icon">📐</span><span class="property-stat-val">185m²</span><span class="property-stat-label">Floor Area</span></div>
+        </div>
+
+        <span class="prop-section-title">About This Property</span>
+        <div class="prop-desc">
+          <p>Occupying the entire top floor of Nelson's most prestigious CBD address, the Central Penthouse offers an extraordinary lock-up-and-leave lifestyle with some of the most spectacular views in the city. From the dramatic rooftop terrace, 360-degree views stretch across Nelson city, the Haven, the Waimea Plains and on clear days all the way to the Richmond Ranges.</p>
+          <p>Presented in immaculate condition, this penthouse has been finished to an exceptional standard throughout. The open-plan living and dining space is flooded with natural light through floor-to-ceiling double-glazed windows and opens to a large private terrace — the perfect urban oasis above the city.</p>
+          <p>The kitchen has been designed for those who love to cook and entertain. Featuring a large island bench in Calacatta marble, a six-burner gas cooktop, integrated refrigeration and a wine fridge, it is as functional as it is beautiful. A separate butler's pantry adds further practicality.</p>
+          <p>Three generously sized bedrooms are all positioned away from the main living areas to ensure privacy and quiet. The master bedroom features its own private terrace with city views, a generous walk-in wardrobe and a luxuriously appointed ensuite with heated floors and a double vanity. The second bathroom is equally well finished.</p>
+          <p>A secure car park in the building's basement, a private storage cage and access to the building's concierge service complete this truly one-of-a-kind offering. Moments from Nelson's best restaurants, cafés and the weekend farmers market, the location is simply unbeatable.</p>
+        </div>
+
+        <span class="prop-section-title">Property Features</span>
+        <div class="features-grid">
+          <div class="feature-item">360° rooftop terrace with city views</div>
+          <div class="feature-item">Calacatta marble kitchen island</div>
+          <div class="feature-item">6-burner gas cooktop</div>
+          <div class="feature-item">Wine fridge & butler's pantry</div>
+          <div class="feature-item">Master with private terrace</div>
+          <div class="feature-item">Heated ensuite floors</div>
+          <div class="feature-item">Floor-to-ceiling double glazing</div>
+          <div class="feature-item">Ducted air conditioning</div>
+          <div class="feature-item">Building concierge service</div>
+          <div class="feature-item">Secure basement car park</div>
+          <div class="feature-item">Private storage cage</div>
+          <div class="feature-item">Video intercom security</div>
+        </div>
+      </div>
+
+      <div class="property-sidebar">
+        <span class="sidebar-price">$895,000</span>
+        <span class="sidebar-price-label">Asking Price · NZD</span>
+        <a href="index.html#contact" class="enquire-btn">Enquire Now</a>
+        <a href="index.html#contact" class="enquire-btn outline">Book a Viewing</a>
+        <div class="open-home">
+          <span class="open-home-label">Open Home</span>
+          <span class="open-home-time">Saturday 11:00am – 11:45am<br>By appointment available</span>
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="agent-card">
+          <div class="agent-avatar">JH</div>
+          <div>
+            <div class="agent-name">James Harrington</div>
+            <div class="agent-title">Senior Agent · Harbour & Co</div>
+          </div>
+        </div>
+        <div style="font-size:.8rem;color:var(--grey);line-height:1.7;font-weight:300;">
+          <div style="margin-bottom:6px;">📞 <a href="tel:0210000001" style="color:var(--grey);text-decoration:none;">021 000 001</a></div>
+          <div>✉️ <a href="mailto:james@harbourandco.co.nz" style="color:var(--grey);text-decoration:none;">james@harbourandco.co.nz</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end properties -->
+
+<footer>
+  <div class="footer-logo">Harbour <span>&</span> Co</div>
+  <p>© 2026 Harbour & Co Real Estate · <span style="opacity:.5;">Demo site — built by <a href="https://nelsonwebco.co.nz" style="color:rgba(255,255,255,0.3);text-decoration:none;">Nelson Web Co</a></span></p>
+</footer>
+
+<a class="float-call" href="tel:035480000">📞</a>
+<a class="scroll-top" id="scrollTop" href="#top">↑</a>
+
+
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">×</button>
+  <button class="lightbox-prev" onclick="changePhoto(-1)">&#8592;</button>
+  <div class="lightbox-img-wrap">
+    <img class="lightbox-img" id="lightboxImg" src="" alt="">
+  </div>
+  <button class="lightbox-next" onclick="changePhoto(1)">&#8594;</button>
+  <div class="lightbox-caption">
+    <div class="lightbox-caption-title" id="lightboxTitle"></div>
+    <div class="lightbox-counter" id="lightboxCounter"></div>
+  </div>
+  <div class="lightbox-thumbs" id="lightboxThumbs"></div>
+</div>
+
+<script>
+  // Lightbox
+  let currentPhotos = [];
+  let currentIndex = 0;
+  let currentProperty = '';
+
+  const photoData = {
+    prop2: {
+      title: 'The Orchards',
+      photos: [
+        { src: 'house2.jpg', caption: 'Exterior — North-Facing Home' },
+        { src: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1800&q=80', caption: 'Open Plan Living Area' },
+        { src: 'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1800&q=80', caption: 'Updated Kitchen with Stone Benchtops' },
+        { src: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=1800&q=80', caption: 'Master Bedroom with Ensuite' },
+        { src: 'https://images.unsplash.com/photo-1721134115634-ab794ccfc81e?w=1800&q=80', caption: 'North-Facing Deck & Garden' },
+        { src: 'https://images.unsplash.com/photo-1621192756171-ecd54e0a4b39?w=1800&q=80', caption: 'Established Orchard & Gardens' },
+      ]
+    },
+    prop3: {
+      title: 'Bayview Retreat',
+      photos: [
+        { src: 'house3.jpg', caption: 'Exterior — Architect Designed Facade' },
+        { src: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1800&q=80', caption: 'Upper Level Living with Bay Views' },
+        { src: 'https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?w=1800&q=80', caption: 'Miele Kitchen with Butler\'s Pantry' },
+        { src: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1800&q=80', caption: 'Master Ensuite with Freestanding Bath' },
+        { src: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1800&q=80', caption: 'Master Bedroom — Eastern Wing' },
+        { src: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1800&q=80', caption: 'Heated Pool & Outdoor Courtyard' },
+      ]
+    },
+    prop4: {
+      title: 'Central Penthouse',
+      photos: [
+        { src: 'house4.jpg', caption: 'Exterior — Premium CBD Address' },
+        { src: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1800&q=80', caption: 'Open Plan Living with City Views' },
+        { src: 'https://images.unsplash.com/photo-1556912167-f556f1f39fdf?w=1800&q=80', caption: 'Calacatta Marble Kitchen Island' },
+        { src: 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=1800&q=80', caption: 'Master Bedroom with Private Terrace' },
+        { src: 'https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?w=1800&q=80', caption: '360° Rooftop Terrace' },
+      ]
+    }
+  };
+
+  function openLightbox(propId, startIndex) {
+    const data = photoData[propId];
+    currentPhotos = data.photos;
+    currentProperty = data.title;
+    currentIndex = startIndex || 0;
+    updateLightbox();
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function changePhoto(dir) {
+    currentIndex = (currentIndex + dir + currentPhotos.length) % currentPhotos.length;
+    updateLightbox();
+  }
+
+  function updateLightbox() {
+    const photo = currentPhotos[currentIndex];
+    document.getElementById('lightboxImg').src = photo.src;
+    document.getElementById('lightboxTitle').textContent = photo.caption;
+    document.getElementById('lightboxCounter').textContent = currentProperty + ' · ' + (currentIndex + 1) + ' / ' + currentPhotos.length;
+
+    const thumbsEl = document.getElementById('lightboxThumbs');
+    thumbsEl.innerHTML = currentPhotos.map((p, i) =>
+      `<img class="lightbox-thumb ${i === currentIndex ? 'active' : ''}"
+       src="${p.src.replace('w=1200', 'w=120')}"
+       onclick="currentIndex=${i};updateLightbox()" alt="${p.caption}">`
+    ).join('');
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', function(e) {
+    if (!document.getElementById('lightbox').classList.contains('open')) return;
+    if (e.key === 'ArrowLeft') changePhoto(-1);
+    if (e.key === 'ArrowRight') changePhoto(1);
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+  // Close on background click
+  document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target === this) closeLightbox();
+  });
+
+  // Scroll top
+  window.addEventListener('scroll',function(){
+    const btn=document.getElementById('scrollTop');
+    if(window.scrollY>400){btn.classList.add('visible');}else{btn.classList.remove('visible');}
+  });
+</script>
+
+</body>
+</html>
